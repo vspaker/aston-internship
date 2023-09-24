@@ -1,95 +1,72 @@
-# Домашнее задание к уроку 5
+# Домашнее задание к уроку 6
 
-## Алгоритмы сортировок (некоторые)
+## Решение типовых задач
 
-- сортировка слиянием (Merge Sort)
-- сортировка вставками (Insertion Sort)
-- быстрая сортировка Хоара (Quick Sort)
-- сортировка Шэлла (Shell Sort)
-- сортировка подсчетом (Counting Sort)
-- гномья сортировка (Gnome Sort)
-- пузырьковая сортировка (Bubble Sort)
-
-## Создание объекта Person и Person2 с унаследованным методом
-
-Способ 1:
+### Задача 1
 
 ```
-function Person() {
-  this.logInfo = function () {
-    console.log('info');
-  };
-}
+let promiseTwo = new Promise((resolve, reject) => {
+  resolve('a');
+}); // синхронная задача (объявляется переменная, ей присваивается промис)
 
-const Person2 = new Person();
+promiseTwo // вызывается промис
+  .then((res) => {
+    return res + 'b'; // первый then => возвращает 'ab'
+  })
+  .then((res) => {
+    return res + 'с'; // второй then => возвращает 'abc'
+  })
+  .finally((res) => {
+    return res + '!!!!!!!'; // просто выполняется, данных из/в промиса не берет / не получает
+  })
+  .catch((res) => {
+    return res + 'd'; // сюда не заходит
+  })
+  .then((res) => {
+    console.log(res); // выводит в консоль 'abc'
+  });
 ```
 
-Способ 2:
+### Задача 2
 
 ```
-const Person = {
-  logInfo: function () {
-    console.log('info');
-  },
-};
+function doSmth() {
+  return Promise.resolve('123');
+} // синхронная задача - объявляется функция
 
-const Person2 = {
-  __proto__: Person,
-};
+doSmth() // функция вызывается
+  .then(function (a) {
+    console.log('1', a); // выводит в консоль '1123'
+    return a; // возвращает '123'
+  })
+  .then(function (b) {
+    console.log('2', b); // выводит в консоль '2123'
+    return Promise.reject('321'); // возвращает отклоненный промис со значением '321'
+  })
+  .catch(function (err) {
+    console.log('3', err); // выводит в консоль '3321'
+  })
+  .then(function (c) {
+    console.log('4', c); // сюда не заходит, и поэтому в консоль ничего не выводит (так я думал изначально)
+    return c; // но проверил и понял, что после catch в следующий then все-таки заходит
+  }); // и в консоль в этом месте выводится '4undefined'
 ```
 
-## Создание класса-наследника PersonThree
+## Написать функцию, которая будет проходить через массив целых чисел и выводить индекс каждого элемента с задержкой в 3 секунды
 
 ```
-class Person {
-  constructor(name) {
-    this.name = name;
+const data = [10, 12, 15, 21];
+let counter = 0;
+
+const getIndex = function () {
+  if (counter < data.length) {
+    console.log('Index of ' + data[counter] + ': ' + counter);
+    counter++;
   }
-  logInfo() {
-    console.log('info');
-  }
-}
-
-class PersonThree extends Person {
-  super() {}
-  get name() {
-    return this._name;
-  }
-  set name(value) {
-    this._name = value;
-  }
-}
-
-const vasya = new PersonThree('Vasya');
-```
-
-## БОНУС-задание
-
-Пишем функцию, которая вернет массив с первой парой чисел, сумма которых равна `total`:
-
-```
-const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-const total = 13;
-// result = [4, 9]
-
-const firstSum = (arr, total) => {
-  for (let i = 0; i <= arr.length; i++) {
-    let firstNumber = arr[i];
-    for (let j = i + 1; j <= arr.length; j++) {
-      if (arr[i] + arr[j] == total) {
-        console.log([arr[i], arr[j]]);
-        return [arr[i], arr[j]];
-      }
-    }
+  if (counter === data.length) {
+    clearInterval(interval);
   }
 };
 
-firstSum(arr, total);
+const interval = setInterval(getIndex, 3000);
 ```
-
-Сложность алгоритма: `O(n^2)` (лучше избегать)
-
-## Вопросы
-
-1. Назвать расшифровку каждой буквы в SOLID
-2. Что делает ключевое слово `super`
